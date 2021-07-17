@@ -1,13 +1,10 @@
 import pathlib
 from bs4 import BeautifulSoup as BS
 import requests
-from pprint import pprint
 import yaml
-
 
 def read_words(filename):
     return [x.strip() for x in pathlib.Path(filename).read_text(encoding="utf-8").split("\n") if x]
-
 
 def get_sentence_from_word(word):
     res = requests.get(f"http://yourei.jp/{word}")
@@ -19,7 +16,6 @@ def get_sentence_from_word(word):
         print("Could not find a sentence for " + word)
         return ""
     return sentence.select_one(".the-sentence").get_text()
-
 
 def add_to_deck(col, sentence, word, audio, image, meanings, info):
     deckId = col.decks.id(info.get("deck"))
@@ -39,7 +35,6 @@ def add_to_deck(col, sentence, word, audio, image, meanings, info):
     col.addNote(senCard)
     col.save()
 
-
 def parse_config(filename):
     with open(filename, "r") as f:
         try:
@@ -58,12 +53,10 @@ def deconjugate(word):
     else:
         return word
 
-
 def all_kana(word):
     is_all_kana = all([(x > '\u3040' and x < '\u309F')
                        or (x > '\u30A0' and x < '\u30FF') for x in word])
     return is_all_kana
-
 
 def all_none(array):
     return all([x is None for x in array])
@@ -79,10 +72,8 @@ def katakana_to_hiragana(string):
             result += character
     return result
 
-
 def isAllHiragana(word):
     return all([isHiragana(x) for x in word])
-
 
 def isHiragana(c):
     return (('\u3041' <= c) and (c <= '\u309e'))

@@ -23,6 +23,8 @@ anki:
     image_field: "Picture"
     audio_field: "Audio"
     meaning_field: "Meaning"
+    words_file: "/home/username/words.txt"
+    failed_words_file: "/home/username/failed.txt"
 ```
 
 Notes:
@@ -42,7 +44,7 @@ Make sure you unzip the yomichan dictionaries to its own folder and move it to t
 There are 2 options to use when running this script, `--word` and `--parsefile`.
 
 1. The word flag (which is defaulted to true) is used to make an anki card from the word in your clipboard.
-2. The parsefile flag is used to batch add cards from a txt file with the list of words. This word file is located at the root of this repo called [words.txt](words.txt).
+2. The parsefile flag is used to batch add cards from a txt file with the list of words.
 
 Before running this script, you might need to click the downgrade and quit button in anki.
 

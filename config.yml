@@ -7,3 +7,5 @@ anki:
     image_field: ""
     audio_field: ""
     meaning_field: ""
+    words_file: ""
+    failed_words_file: ""

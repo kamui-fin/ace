@@ -11,7 +11,6 @@ import uuid
 
 DATA_DIR = pathlib.Path(__file__).parent.parent.parent / "data" / "Image_Audio"
 
-
 class Forvo():
     def __init__(self):
         self.selLang = "Japanese"
