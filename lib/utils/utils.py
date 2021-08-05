@@ -1,7 +1,7 @@
 import pathlib
-from bs4 import BeautifulSoup as BS
 import requests
 import yaml
+from bs4 import BeautifulSoup as BS
 
 def read_words(filename):
     return [x.strip() for x in pathlib.Path(filename).read_text(encoding="utf-8").split("\n") if x]
@@ -43,7 +43,6 @@ def parse_config(filename):
         except yaml.YAMLError as exc:
             print("Error reading config file!\n", exc)
 
-
 def deconjugate(word):
     res = requests.get(
         f"https://jisho.org/api/v1/search/words?keyword={word}").json()["data"]
@@ -61,7 +60,6 @@ def all_kana(word):
 def all_none(array):
     return all([x is None for x in array])
 
-
 def katakana_to_hiragana(string):
     result = ''
     for character in string:
@@ -72,8 +70,8 @@ def katakana_to_hiragana(string):
             result += character
     return result
 
-def isAllHiragana(word):
-    return all([isHiragana(x) for x in word])
+def is_all_hiragana(word):
+    return all([is_hiragana(x) for x in word])
 
-def isHiragana(c):
+def is_hiragana(c):
     return (('\u3041' <= c) and (c <= '\u309e'))

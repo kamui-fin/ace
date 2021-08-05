@@ -7,7 +7,7 @@ This is a script to make [anime cards]("https://www.animecards.site") on the fly
 First, you need to install all the dependencies. This can be done with a simple command:
 
 ```
-./scripts/build.sh
+pip install -r requirements.txt
 ```
 
 The next step is to set up the config in [config.yml](config.yml). All you have to do is fill in the missing blanks.
@@ -43,13 +43,15 @@ Make sure you unzip the yomichan dictionaries to its own folder and move it to t
 
 There are 2 options to use when running this script, `--word` and `--parsefile`.
 
-1. The word flag (which is defaulted to true) is used to make an anki card from the word in your clipboard.
+1. The word flag (which is the default) is used to make an anki card from the word in your clipboard.
 2. The parsefile flag is used to batch add cards from a txt file with the list of words.
 
 Before running this script, you might need to click the downgrade and quit button in anki.
 
-There's an easier way to run this program, and that is through the bash files in the[`scripts`](scripts) folder of this repo.
-
 ### Hotkey
 
-Setting up a hotkey on Linux is actually really simple. Most desktop environments/window managers have a place for hotkeys in their system settings/config file. There are multiple scripts located in the [`scripts`](scripts) folder of this repo. Make a keybind that runs the file [`add-one.sh`](scripts/add-one.sh). This file with generate an anki card for the word in your clipboard.
+Setting up a hotkey on Linux is actually really simple. Most desktop environments/window managers have a place for hotkeys in their system settings or config file.
+Pick a keybind and set it to run the following command to add the card from the word in the clipboard:
+```bash
+python main.py --parsefile
+```

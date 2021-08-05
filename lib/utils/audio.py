@@ -1,8 +1,3 @@
-import argparse
-import json
-import os
-import urllib
-from bs4 import BeautifulSoup
 import requests
 import re
 import base64
@@ -26,7 +21,7 @@ class Forvo():
         )
 
     def run(self, term):
-        resultList = self.attemptFetchForvoLinks(term)
+        resultList = self.attempt_fetch_forvo_links(term)
         return resultList
 
     def search(self, term):
@@ -34,20 +29,20 @@ class Forvo():
             '◳t', re.sub(r'[\/\'".,&*@!#()\[\]\{\}]', '', term))
         return self.forvo_search(query)
 
-    def decodeURL(self, url1, url2, protocol, audiohost, server):
+    def decode_url(self, url1, url2, protocol, audiohost, server):
         url2 = protocol + "//" + server + "/player-mp3-highHandler.php?path=" + url2
         url1 = protocol + "//" + audiohost + "/mp3/" + \
             base64.b64decode(url1).decode("utf-8", "strict")
         return url1, url2
 
-    def attemptFetchForvoLinks(self, term):
+    def attempt_fetch_forvo_links(self, term):
         urls = self.search(term)
         if len(urls) > 0:
             return urls[0]
         else:
             return False
 
-    def generateURLS(self, results):
+    def generate_urls(self, results):
         audio = re.findall(r'var pronunciations = \[([\w\W\n]*?)\];', results)
         if not audio:
             return []
@@ -62,14 +57,14 @@ class Forvo():
             protocol = 'https:'
             urls = []
             for datum in data:
-                url1, url2 = self.decodeURL(
+                url1, _ = self.decode_url(
                     datum[2], datum[3], protocol, audiohost, server)
                 urls.append(url1)
             return urls
         else:
             return []
 
-    def setSearchRegion(self, region):
+    def set_search_region(self, region):
         self.region = region
 
     def forvo_search(self, query_gen):
@@ -79,8 +74,7 @@ class Forvo():
             return []
         results = html
 
-        return self.generateURLS(results)
-
+        return self.generate_urls(results)
 
 def get_audio_from_word(col,  word):
     forvo = Forvo()

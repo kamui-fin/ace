@@ -1,17 +1,18 @@
 import os
+import argparse
+import pyperclip
+import pathlib
+from tqdm import tqdm
 from anki import Collection
 from lib.utils import utils
-from tqdm import tqdm
-import argparse
 from lib.utils.image import get_pic_from_word
 from lib.utils.audio import get_audio_from_word
 from lib.utils.dict import lookup
-import pyperclip
-import pathlib
 
 HOME = os.path.dirname(__file__)
 config = utils.parse_config(os.path.join(HOME, "config.yml"))
 col = Collection(config.get("collection"))
+
 
 def package_card(word):
     deconjugated_word = utils.deconjugate(word)
@@ -37,6 +38,10 @@ def package_card(word):
 
 def text_file():
     words_file = config.get("words_file")
+    if not pathlib.Path.exists(words_file):
+        print("Invalid words file path")
+        return False
+
     failed_words_file = config.get("failed_words_file")
     words = utils.read_words(words_file)
     words = list(set(words))
@@ -44,8 +49,8 @@ def text_file():
 
     for word in pbar:
         res = package_card(word)
-        if not res:
-            with open(config.get(failed_words_file)) as f:
+        if not res and failed_words_file != "":
+            with open(failed_words_file, mode="a", encoding="utf-8") as f:
                 f.write(word + "\n")
     col.close()
 
@@ -53,7 +58,7 @@ def text_file():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='Program to swiftly make anki cards')
-    parser.add_argument("--word", action="store_true")
+    parser.add_argument("--word", action="store_true")  # default
     parser.add_argument("--parsefile", action="store_true")
     args = parser.parse_args()
     if args.parsefile:

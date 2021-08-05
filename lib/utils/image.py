@@ -1,4 +1,3 @@
-import argparse
 import json
 import os
 import urllib
@@ -12,9 +11,7 @@ from urllib.parse import urlparse
 
 DATA_DIR = pathlib.Path(__file__).parent.parent.parent / "data" / "Image_Audio"
 
-
 class Google():
-
     def __init__(self):
         self.GOOGLE_SEARCH_URL = "https://www.google.com/search"
         self.term = False
@@ -41,7 +38,7 @@ class Google():
         url = 'https://www.google.co.jp/search'
         yield url + "?" + params
 
-    def getResultsFromRawHtml(self, html):
+    def get_res_from_raw_html(self, html):
         pattern = r"AF_initDataCallback[\s\S]+AF_initDataCallback\({key: '[\s\S]+?',[\s\S]+?data:(\[[\s\S]+\])[\s\S]+?<\/script><script id="
         matches = re.findall(pattern, html)
         results = []
@@ -51,7 +48,7 @@ class Google():
                 for d in decoded:
                     d1 = d[1]
                     if d1:
-                        results.append(str(d1[3][0]))   
+                        results.append(str(d1[3][0]))
             return results
         except:
             return []
@@ -64,8 +61,9 @@ class Google():
             try:
                 count = 0
                 while not finished:
-                    count+= 1
-                    hr = self.session.get(next(query_gen)+ '&ijn=0&cr=' + "countryJP")
+                    count += 1
+                    hr = self.session.get(
+                        next(query_gen) + '&ijn=0&cr=' + "countryJP")
                     html = hr.text
                     if not html and not '<!doctype html>' in html:
                         if count > 5:
@@ -78,7 +76,7 @@ class Google():
                         break
             except:
                 return False
-            results = self.getResultsFromRawHtml(html)
+            results = self.get_res_from_raw_html(html)
             if len(results) == 0:
                 soup = BeautifulSoup(html, "html.parser")
                 elements = soup.select(".rg_meta.notranslate")
@@ -103,12 +101,11 @@ def search(target):
     result = google.search(target, maximum=2)
     return result[0] if result else ""
 
-
 def get_pic_from_word(col, word):
     url = search(word)
     if url:
         urlparsed = urlparse(url)
-        root, ext = os.path.splitext(urlparsed.path)
+        _, ext = os.path.splitext(urlparsed.path)
         pic_filename = pathlib.Path(DATA_DIR).joinpath(
             f'{word}_{uuid.uuid4()}{ext}')
         with open(pic_filename, mode="wb") as file:
@@ -121,4 +118,3 @@ def get_pic_from_word(col, word):
     else:
         tag = ""
     return tag
-

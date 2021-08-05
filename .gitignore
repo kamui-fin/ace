@@ -1,7 +1,4 @@
 data/dict/fallback/*
 data/dict/priority/*
 data/Image_Audio/*
-
-manual.txt
-
 __pycache__
