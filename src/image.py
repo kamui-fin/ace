@@ -7,9 +7,9 @@ import uuid
 import pathlib
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urlencode
-from anki import Collection
+from anki.collection import Collection
 from typing import Generator, List
-from .config import DATA_DIR
+from config import DATA_DIR
 
 class Google:
     def __init__(self):
@@ -26,7 +26,7 @@ class Google:
             }
         )
 
-    def search(self, keyword: str, maximum: int):
+    def search(self, keyword: str, maximum: int) -> List[str]:
         query = self.query_gen(keyword)
         return self.image_search(query, maximum)
 
@@ -37,7 +37,7 @@ class Google:
         url = 'https://www.google.co.jp/search'
         yield url + "?" + params
 
-    def get_res_from_raw_html(self, html: str):
+    def get_res_from_raw_html(self, html: str) -> List[str]:
         pattern = r"AF_initDataCallback[\s\S]+AF_initDataCallback\({key: '[\s\S]+?',[\s\S]+?data:(\[[\s\S]+\])[\s\S]+?<\/script><script id="
         matches = re.findall(pattern, html)
         results = []

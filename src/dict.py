@@ -1,19 +1,9 @@
 import json
 import pathlib
 import glob
-import os
-from typing import List
-from .utils import all_kana, error_out, is_all_hiragana, katakana_to_hiragana, all_none
-from .config import FALLBACK_DIR, PRIORITY_DIR
-
-fallback_dict = glob.glob(str(FALLBACK_DIR / "*") + os.path.sep)
-priority_dict = glob.glob(str(PRIORITY_DIR / "*") + os.path.sep)
-
-if not priority_dict:
-    error_out("You have no yomichan dictionaries in the dict/ folder!")
-
-if fallback_dict:
-    fallback_dict = fallback_dict[0]
+from typing import List, Tuple, Union
+from .utils import all_kana, is_all_hiragana, katakana_to_hiragana, all_none
+from .config import fallback_dict, priority_dict
 
 class Dictionary:
     def __init__(self, path: str):
@@ -21,7 +11,7 @@ class Dictionary:
         self.banks = glob.glob(str(pathlib.Path(self.path) / "ter*"))
         self._dict = self.load_dict()
 
-    def load_dict(self):
+    def load_dict(self) -> List[Tuple[str, str, str, str, int, List[str], int, str]]:
         entrs = []
         for bank in self.banks:
             with open(bank, encoding="utf-8") as f:
@@ -29,7 +19,7 @@ class Dictionary:
                 entrs.extend(obj)
         return entrs
 
-    def lookup(self, word):
+    def lookup(self, word: str) -> Union[Tuple[str, str], None]:
         allKana = all_kana(word)
         if allKana:
             if not is_all_hiragana(word):

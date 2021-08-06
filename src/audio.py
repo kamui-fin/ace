@@ -4,8 +4,8 @@ import re
 import base64
 import pathlib
 import uuid
-
-DATA_DIR = pathlib.Path(__file__).parent.parent.parent / "data" / "image_audio"
+from typing import List, Tuple
+from .config import DATA_DIR
 
 class Forvo:
     def __init__(self):
@@ -19,29 +19,29 @@ class Forvo:
             }
         )
 
-    def run(self, term: str):
+    def run(self, term: str) -> str:
         resultList = self.attempt_fetch_forvo_links(term)
         return resultList
 
-    def search(self, term: str):
+    def search(self, term: str) -> List[str]:
         query = self.GOOGLE_SEARCH_URL.replace(
             '◳t', re.sub(r'[\/\'".,&*@!#()\[\]\{\}]', '', term))
         return self.forvo_search(query)
 
-    def decode_url(self, url1: str, url2: str, protocol: str, audiohost: str, server: str):
+    def decode_url(self, url1: str, url2: str, protocol: str, audiohost: str, server: str) -> Tuple[str, str]:
         url2 = protocol + "//" + server + "/player-mp3-highHandler.php?path=" + url2
         url1 = protocol + "//" + audiohost + "/mp3/" + \
             base64.b64decode(url1).decode("utf-8", "strict")
         return url1, url2
 
-    def attempt_fetch_forvo_links(self, term: str):
+    def attempt_fetch_forvo_links(self, term: str) -> str:
         urls = self.search(term)
         if len(urls) > 0:
             return urls[0]
         else:
-            return False
+            return ""
 
-    def generate_urls(self, results: str):
+    def generate_urls(self, results: str) -> List[str]:
         audio = re.findall(r'var pronunciations = \[([\w\W\n]*?)\];', results)
         if not audio:
             return []
@@ -66,7 +66,7 @@ class Forvo:
     def set_search_region(self, region: str):
         self.region = region
 
-    def forvo_search(self, query_gen: str):
+    def forvo_search(self, query_gen: str) -> List[str]:
         try:
             html = self.session.get(query_gen).text
         except:
@@ -75,7 +75,7 @@ class Forvo:
 
         return self.generate_urls(results)
 
-def get_audio_from_word(col: Collection,  word: str):
+def get_audio_from_word(col: Collection,  word: str) -> str:
     forvo = Forvo()
     url = forvo.run(word)
     if url:
