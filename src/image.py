@@ -1,23 +1,23 @@
 import json
 import os
-import urllib
-from bs4 import BeautifulSoup
 import requests
 import time
 import re
 import uuid
 import pathlib
-from urllib.parse import urlparse
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse, urlencode
+from anki import Collection
+from typing import Generator, List
+from .config import DATA_DIR
 
-DATA_DIR = pathlib.Path(__file__).parent.parent.parent / "data" / "Image_Audio"
-
-class Google():
+class Google:
     def __init__(self):
         self.GOOGLE_SEARCH_URL = "https://www.google.com/search"
         self.term = False
-        self.initSession()
+        self.init_session()
 
-    def initSession(self):
+    def init_session(self):
         self.session = requests.session()
         self.session.headers.update(
             {
@@ -26,19 +26,18 @@ class Google():
             }
         )
 
-    def search(self, keyword, maximum):
+    def search(self, keyword: str, maximum: int):
         query = self.query_gen(keyword)
-
         return self.image_search(query, maximum)
 
-    def query_gen(self, keyword):
-        params = urllib.parse.urlencode(
+    def query_gen(self, keyword: str) -> Generator[str, None, None]:
+        params = urlencode(
             {"q": keyword, "tbm": "isch"}
         )
         url = 'https://www.google.co.jp/search'
         yield url + "?" + params
 
-    def get_res_from_raw_html(self, html):
+    def get_res_from_raw_html(self, html: str):
         pattern = r"AF_initDataCallback[\s\S]+AF_initDataCallback\({key: '[\s\S]+?',[\s\S]+?data:(\[[\s\S]+\])[\s\S]+?<\/script><script id="
         matches = re.findall(pattern, html)
         results = []
@@ -53,10 +52,11 @@ class Google():
         except:
             return []
 
-    def image_search(self, query_gen, maximum):
+    def image_search(self, query_gen: Generator[str, None, None], maximum: int) -> List[str]:
         results = []
         total = 0
         finished = False
+        html = ""
         while True:
             try:
                 count = 0
@@ -69,13 +69,13 @@ class Google():
                         if count > 5:
                             finished = True
                             break
-                        self.initSession()
+                        self.init_session()
                         time.sleep(.1)
                     else:
                         finished = True
                         break
             except:
-                return False
+                return []
             results = self.get_res_from_raw_html(html)
             if len(results) == 0:
                 soup = BeautifulSoup(html, "html.parser")
@@ -96,12 +96,12 @@ class Google():
         return results
 
 
-def search(target):
+def search(target: str) -> str:
     google = Google()
     result = google.search(target, maximum=2)
     return result[0] if result else ""
 
-def get_pic_from_word(col, word):
+def get_pic_from_word(col: Collection, word: str) -> str:
     url = search(word)
     if url:
         urlparsed = urlparse(url)

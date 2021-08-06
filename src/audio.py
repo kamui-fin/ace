@@ -1,17 +1,16 @@
+from anki.collection import Collection
 import requests
 import re
 import base64
 import pathlib
 import uuid
 
-DATA_DIR = pathlib.Path(__file__).parent.parent.parent / "data" / "Image_Audio"
+DATA_DIR = pathlib.Path(__file__).parent.parent.parent / "data" / "image_audio"
 
-class Forvo():
+class Forvo:
     def __init__(self):
-        self.selLang = "Japanese"
         self.term = False
-        self.langShortCut = "ja"
-        self.GOOGLE_SEARCH_URL = "https://forvo.com/word/◳t/#" + self.langShortCut  # ◳r
+        self.GOOGLE_SEARCH_URL = "https://forvo.com/word/◳t/#ja"
         self.session = requests.session()
         self.session.headers.update(
             {
@@ -20,29 +19,29 @@ class Forvo():
             }
         )
 
-    def run(self, term):
+    def run(self, term: str):
         resultList = self.attempt_fetch_forvo_links(term)
         return resultList
 
-    def search(self, term):
+    def search(self, term: str):
         query = self.GOOGLE_SEARCH_URL.replace(
             '◳t', re.sub(r'[\/\'".,&*@!#()\[\]\{\}]', '', term))
         return self.forvo_search(query)
 
-    def decode_url(self, url1, url2, protocol, audiohost, server):
+    def decode_url(self, url1: str, url2: str, protocol: str, audiohost: str, server: str):
         url2 = protocol + "//" + server + "/player-mp3-highHandler.php?path=" + url2
         url1 = protocol + "//" + audiohost + "/mp3/" + \
             base64.b64decode(url1).decode("utf-8", "strict")
         return url1, url2
 
-    def attempt_fetch_forvo_links(self, term):
+    def attempt_fetch_forvo_links(self, term: str):
         urls = self.search(term)
         if len(urls) > 0:
             return urls[0]
         else:
             return False
 
-    def generate_urls(self, results):
+    def generate_urls(self, results: str):
         audio = re.findall(r'var pronunciations = \[([\w\W\n]*?)\];', results)
         if not audio:
             return []
@@ -64,10 +63,10 @@ class Forvo():
         else:
             return []
 
-    def set_search_region(self, region):
+    def set_search_region(self, region: str):
         self.region = region
 
-    def forvo_search(self, query_gen):
+    def forvo_search(self, query_gen: str):
         try:
             html = self.session.get(query_gen).text
         except:
@@ -76,7 +75,7 @@ class Forvo():
 
         return self.generate_urls(results)
 
-def get_audio_from_word(col,  word):
+def get_audio_from_word(col: Collection,  word: str):
     forvo = Forvo()
     url = forvo.run(word)
     if url:

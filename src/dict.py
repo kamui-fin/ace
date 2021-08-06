@@ -2,25 +2,21 @@ import json
 import pathlib
 import glob
 import os
-from lib.utils.utils import all_kana, is_all_hiragana, katakana_to_hiragana, all_none
-
-FALLBACK_DIR = pathlib.Path(
-    __file__).parent.parent.parent / "data" / "dict" / "fallback"
-PRIORITY_DIR = pathlib.Path(
-    __file__).parent.parent.parent / "data" / "dict" / "priority"
+from typing import List
+from .utils import all_kana, error_out, is_all_hiragana, katakana_to_hiragana, all_none
+from .config import FALLBACK_DIR, PRIORITY_DIR
 
 fallback_dict = glob.glob(str(FALLBACK_DIR / "*") + os.path.sep)
 priority_dict = glob.glob(str(PRIORITY_DIR / "*") + os.path.sep)
 
 if not priority_dict:
-    print("You have no yomichan dictionaries in the dict/ folder!")
-    quit()
+    error_out("You have no yomichan dictionaries in the dict/ folder!")
 
 if fallback_dict:
     fallback_dict = fallback_dict[0]
 
-class Dictionary(object):
-    def __init__(self, path):
+class Dictionary:
+    def __init__(self, path: str):
         self.path = path
         self.banks = glob.glob(str(pathlib.Path(self.path) / "ter*"))
         self._dict = self.load_dict()
@@ -47,22 +43,19 @@ class Dictionary(object):
 
 priority_dictonaries = [Dictionary(d) for d in priority_dict]
 if fallback_dict:
-    fallback_dictionary = Dictionary(fallback_dict)
+    fallback_dictionary = Dictionary(fallback_dict[0])
 
-def lookup(word):
+def lookup(word: str) -> List[str]:
     meanings = []
     for pr in priority_dictonaries:
-        try:
-            meaning_res, reading = pr.lookup(word)
-        except:
-            continue
-        meanings.append(meaning_res)
+        res = pr.lookup(word)
+        if res:
+            meaning_res, reading = res
+            meanings.append(meaning_res)
     if fallback_dictionary:
         if all_none(meanings):
-            try:
-                meaning_res, reading = fallback_dictionary.lookup(word)
-            except:
-                pass
-            else:
+            res = fallback_dictionary.lookup(word)
+            if res:
+                meaning_res, reading = res
                 meanings.append(f"{word}【{reading}】\n{meaning_res}")
     return [x.replace("\n", "<br>") for x in meanings if x]
