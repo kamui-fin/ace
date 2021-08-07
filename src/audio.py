@@ -5,7 +5,7 @@ import base64
 import pathlib
 import uuid
 from typing import List, Tuple
-from .config import DATA_DIR
+from config import DATA_DIR
 
 class Forvo:
     def __init__(self):

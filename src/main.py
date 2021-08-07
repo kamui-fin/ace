@@ -2,13 +2,17 @@ import argparse
 import pyperclip
 from tqdm import tqdm
 from anki.collection import Collection
+import anki.errors
 from image import get_pic_from_word
 from audio import get_audio_from_word
 from dict import lookup
 from utils import error_out, deconjugate, get_sentence_from_word, add_to_deck, read_words
 import config
 
-col = Collection(config.col_file)
+try:
+    col = Collection(config.col_file)
+except anki.errors.DBError:
+    error_out("Close anki before running script.")
 
 def package_card(word: str):
     deconjugated_word = deconjugate(word)
@@ -21,12 +25,12 @@ def package_card(word: str):
     if not meanings:
         print("No meanings found for " + deconjugated_word)
         return False
-    try:
-        image, audio = get_pic_from_word(
-            col, word), get_audio_from_word(col, word)
-    except:
+
+    image, audio = get_pic_from_word(
+        col, deconjugated_word), get_audio_from_word(col, deconjugated_word)
+
+    if not image or not audio:
         print(f"No media found for {deconjugated_word}")
-        return False
 
     add_to_deck(col, sentence, deconjugated_word, audio, image, meanings)
 

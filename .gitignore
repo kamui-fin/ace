@@ -1,6 +1,4 @@
-data/dict/fallback/*
-data/dict/priority/*
-data/image_audio/*
+data/
 
 __pycache__/
 *.py[cod]

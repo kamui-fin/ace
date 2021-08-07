@@ -21,8 +21,7 @@ class Google:
         self.session = requests.session()
         self.session.headers.update(
             {
-                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:10.0) \
-                    Gecko/20100101 Firefox/10.0"
+                "User-Agent": "Mozilla/5.0 (Linux; Android 9; SM-G960F Build/PPR1.180610.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.157 Mobile Safari/537.36"
             }
         )
 
@@ -63,7 +62,7 @@ class Google:
                 while not finished:
                     count += 1
                     hr = self.session.get(
-                        next(query_gen) + '&ijn=0&cr=' + "countryJP")
+                        next(query_gen) + "&ijn=0&cr=countryJP")
                     html = hr.text
                     if not html and not '<!doctype html>' in html:
                         if count > 5:

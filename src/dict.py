@@ -2,8 +2,8 @@ import json
 import pathlib
 import glob
 from typing import List, Tuple, Union
-from .utils import all_kana, is_all_hiragana, katakana_to_hiragana, all_none
-from .config import fallback_dict, priority_dict
+from utils import all_kana, is_all_hiragana, katakana_to_hiragana, all_none
+from config import fallback_dict, priority_dict
 
 class Dictionary:
     def __init__(self, path: str):

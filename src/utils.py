@@ -21,10 +21,10 @@ def get_sentence_from_word(word: str) -> str:
 def add_to_deck(col: Collection, sentence: str, word: str, audio: str, image: str, meanings: List[str]):
     deckId = col.decks.id(config.deck_name)
     col.decks.select(deckId)
-    basic_model = col.models.byName(config.note_type)
+    basic_model = col.models.by_name(config.note_type)
     basic_model['did'] = deckId
     col.models.save(basic_model)
-    col.models.setCurrent(basic_model)
+    col.models.set_current(basic_model)
 
     card = col.newNote()
 
@@ -41,10 +41,10 @@ def deconjugate(word: str) -> str:
     res = requests.get(
         f"https://jisho.org/api/v1/search/words?keyword={word}").json()["data"]
     if res:
-        word_deconj = res[0]["slug"]
-        return word_deconj
-    else:
-        return word
+        jp_data = res[0]["japanese"]
+        if jp_data:
+            return jp_data[0]["reading"]
+    return word
 
 def all_kana(word: str) -> bool:
     is_all_kana = all([(x > '\u3040' and x < '\u309F')
