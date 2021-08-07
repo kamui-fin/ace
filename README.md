@@ -1,30 +1,31 @@
-# Batch Anki Exporter
+# ACE (Anime Cards Exporter)
 
 This is a script to make [anime cards]("https://www.animecards.site") on the fly with a single hotkey on linux. It takes a sentence from [yourei](https://www.yourei.jp), an image from [google images](https://www.google.com/imghp?hl=ja), an audio recording from [forvo](https://www.forvo.com), and finally, a couple meanings from yomichan dictionaries of your choice, which is all packaged into 1 card and sent directly to your anki.
 
 ## Installation
 
-First, you need to install all the dependencies. This can be done with a simple command:
-
+```bash
+$ git clone https://github.com/kamui-7/ace.git
+$ cd ace
+$ pip install -r requirements.txt
+$ mkdir -p data/dict/{fallback,priority}
+$ mkdir -p data/image_audio
 ```
-pip install -r requirements.txt
-```
 
-The next step is to set up the config in [config.yml](config.yml). All you have to do is fill in the missing blanks.
+Next, fill out the missing blanks in [config.yml](config.yml). All options are documented.
 Here's an example config file:
 
 ```yml
-anki:
-    collection: "/home/username/.local/share/Anki2/profile1/collection.anki2"
-    deck: "My Deck"
-    note_type: "My Notetype"
-    word_field: "Word"
-    sentence_field: "Expression"
-    image_field: "Picture"
-    audio_field: "Audio"
-    meaning_field: "Meaning"
-    words_file: "/home/username/words.txt"
-    failed_words_file: "/home/username/failed.txt"
+collection: "/home/username/.local/share/Anki2/profile1/collection.anki2"
+deck: "My Deck"
+note_type: "My Notetype"
+word_field: "Word"
+sentence_field: "Expression"
+image_field: "Picture"
+audio_field: "Audio"
+meaning_field: "Meaning"
+words_file: "/home/username/words.txt"
+failed_words_file: "/home/username/failed.txt"
 ```
 
 Notes:
@@ -33,25 +34,30 @@ Notes:
 2. The collection is your profile's database
 3. You have to close anki before running this script
 
-Next, we need to setup the dictionaries that you will be using. There's 2 folders in the `dict` folder, fallback and priority. Priority is the folder where you will put your dicts that you want to search first. The dictionaries located in the fallback folder will be used if the program couldn't find any entries in your priority dicts.
+Now for the dictionary setup. There's 2 folders in the `dict` folder, fallback and priority. Priority is the folder where you will place your dictionaries that you want to search first. The dictionaries located in the fallback folder will be used if the program couldn't find any entries in your priority dicts.
 
-Make sure you unzip the yomichan dictionaries to its own folder and move it to the appropriate directory inside `dict`. Here is an example of how it could look:
+Make sure you unzip the yomichan dictionaries to its own folder and move them to the appropriate directories inside `dict`. Here is an example of how it could look:
 
-![](screenshots/dicts.png)
+```
+dict/
+├── fallback/
+│  └── jmdict_english/
+└── priority
+   ├── 三省堂　スーパー大辞林/
+   └── 新明解国語辞典第五版v3/
+````
 
 ## Options
 
 There are 2 options to use when running this script, `--word` and `--parsefile`.
 
-1. The word flag (which is the default) is used to make an anki card from the word in your clipboard.
-2. The parsefile flag is used to batch add cards from a txt file with the list of words.
-
-Before running this script, you might need to click the downgrade and quit button in anki.
+1. The `word` flag (which is the default) is used to make an anki card from the word in your clipboard.
+2. The `parsefile` flag is used to batch export cards from a file with the list of words, where each word is on its own line.
 
 ### Hotkey
 
-Setting up a hotkey on Linux is actually really simple. Most desktop environments/window managers have a place for hotkeys in their system settings or config file.
-Pick a keybind and set it to run the following command to add the card from the word in the clipboard:
+With all this setup, you can easily create a keybind for creating the card from the word in your clipboard. Most desktop environments and window managers have a place for keybinds in their system settings GUI or config file. Pick a keybind and set it to run the following command:
 ```bash
-python main.py --parsefile
+python src/main.py --parsefile
 ```
+Note that you need to adjust to the path of `main.py`, depending on where you downloaded the script.

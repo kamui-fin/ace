@@ -12,8 +12,7 @@ PRIORITY_DIR = HOME / "data" / "dict" / "priority"
 
 def parse_config(filename: pathlib.Path) -> Dict[str, str]:
     with open(filename, "r") as f:
-        obj = yaml.safe_load(f)
-        return obj["anki"]
+        return yaml.safe_load(f)
 
 try:
     config = parse_config(HOME / "config.yml")

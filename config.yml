@@ -1,18 +1,17 @@
-anki:
-    # collection.anki2 file located inside anki user profile
-    collection: ""
+# collection.anki2 file located inside anki user profile
+collection: ""
 
-    # deck info
-    deck: ""
-    note_type: ""
-    word_field: ""
-    sentence_field: ""
-    image_field: ""
-    audio_field: ""
-    meaning_field: ""
+  # deck info
+deck: ""
+note_type: ""
+word_field: ""
+sentence_field: ""
+image_field: ""
+audio_field: ""
+meaning_field: ""
 
-    # input words file with each word on its own line
-    words_file: ""
-    # (OPTIONAL) failed to generate words go in this file
-    # useful for manual adding
-    failed_words_file: ""
+  # input words file with each word on its own line
+words_file: ""
+  # (OPTIONAL) failed to generate words go in this file
+  # useful for manual adding
+failed_words_file: ""
